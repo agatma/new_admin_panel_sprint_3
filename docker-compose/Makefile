@@ -2,7 +2,7 @@ PROJECT_NAME = Movies
 
 all:
 	@echo "make full_run		- Запуск контейнеров с миграциями и бекапом"
-	@echo "make full_run		- Пустой запуск контейнеров"
+	@echo "make run		- Пустой запуск контейнеров"
 	@echo "make migrate		- Выполнить миграции "
 	@echo "make load		- Загрузить данные в postgresql "
 	@echo "make superuser		- Создать суперпользователя "
