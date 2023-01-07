@@ -58,6 +58,6 @@ MOVIES_INDEX = {
                     "name": {"type": "text", "analyzer": "ru_en"},
                 },
             },
-        }
-    }
+        },
+    },
 }

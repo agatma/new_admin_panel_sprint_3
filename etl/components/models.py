@@ -1,4 +1,3 @@
-from typing import List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -12,11 +11,11 @@ class Person(BaseModel):
 class FilmWork(BaseModel):
     id: UUID
     imdb_rating: float
-    genre: List[str]
+    genre: list[str]
     title: str
-    description: Optional[str]
-    director: List[Optional[str]]
-    actors_names: List[str]
-    writers_names: List[str]
-    actors: List[Person]
-    writers: List[Person]
+    description: str | None
+    director: list[str | None]
+    actors_names: list[str]
+    writers_names: list[str]
+    actors: list[Person]
+    writers: list[Person]

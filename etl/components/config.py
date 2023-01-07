@@ -9,7 +9,12 @@ class PostgresConfig(BaseSettings):
     port: int = Field(..., env="POSTGRES_PORT")
     options: str = Field(..., env="POSTGRES_OPTIONS")
 
+    @property
+    def pg_dsn(self):
+        return f"postgres://{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}"
+
     class Config:
+        case_sensitive = False
         env_file = ".env"
         env_file_encoding = "utf-8"
 
@@ -19,7 +24,8 @@ class ElasticConfig(BaseSettings):
     port: int = Field(9200, env="ELASTIC_PORT")
     index_name: str = Field("movies", env="INDEX_NAME")
 
-    def elastic_url(self):
+    @property
+    def elastic_dsn(self):
         return f"http://{self.host}:{self.port}/"
 
     class Config:
@@ -30,7 +36,7 @@ class ElasticConfig(BaseSettings):
 class ETLConfig(BaseSettings):
     BATCH_SIZE: int = Field(100, env="BATCH_SIZE")
     TIME_INTERVAL: int = Field(300, env="TIME_INTERVAL")
-    STATE_FILE_NAME: str = Field('state.json', env="STATE_FILE_NAME")
+    STATE_FILE_NAME: str = Field("state.json", env="STATE_FILE_NAME")
 
     class Config:
         env_file = ".env"
@@ -40,4 +46,3 @@ class ETLConfig(BaseSettings):
 etl_settings = ETLConfig()
 pg_settings = PostgresConfig()
 es_settings = ElasticConfig()
-

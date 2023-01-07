@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from psycopg2.extras import RealDictRow
 from pydantic.error_wrappers import ValidationError
 
@@ -9,11 +7,15 @@ from components.storage import storage
 
 
 def validate_film_works(
-    rows: List[Optional[RealDictRow]],
-) -> List[Optional[FilmWork]]:
+    rows: list[RealDictRow | None],
+) -> list[FilmWork | None]:
     """Валидация фильмов перед загрузкой в Elasticsearch"""
 
-    result, errors, success_id, = [], {}, set()
+    result, errors, success_id, = (
+        [],
+        {},
+        set(),
+    )
     for row in rows:
         try:
             result.append(FilmWork(**row))
