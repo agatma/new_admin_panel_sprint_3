@@ -8,7 +8,7 @@ from clients.postgres_client import PostgresClient, PostgresCursor
 from components.config import es_settings, pg_settings
 from components.schema import MOVIES_INDEX
 from components.storage import storage
-from components.movies_helpers import (
+from components.helpers import (
     bulk_upload,
     create_index_if_not_exists,
     extract_from_postgres,
