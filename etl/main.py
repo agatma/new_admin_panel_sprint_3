@@ -13,7 +13,7 @@ def main():
         try:
             etl.load_data_from_postgres_to_elastic()
         except Exception as error:
-            logger.error(ERROR_MESSAGE.format(error=error))
+            logger.exception(ERROR_MESSAGE.format(error=error))
         finally:
             logger.info("Остановка процесса на 5 минут")
             sleep(etl_settings.TIME_INTERVAL)
