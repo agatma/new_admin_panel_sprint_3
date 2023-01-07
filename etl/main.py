@@ -1,6 +1,6 @@
 from time import sleep
 
-from components.config import etl_settings, pg_settings
+from components.config import etl_settings
 from components.logger import logger
 from etl import ETL
 
@@ -21,4 +21,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print(pg_settings)

@@ -5,14 +5,14 @@ from psycopg2.extras import RealDictCursor
 
 from clients.elasticsearch_client import ElasticsearchClient
 from clients.postgres_client import PostgresClient, PostgresCursor
-from components.config import es_settings, pg_settings
-from components.schema import MOVIES_INDEX
-from components.storage import storage
+from components.config import es_settings, etl_settings, pg_settings
 from components.helpers import (
-    bulk_upload,
     create_index_if_not_exists,
     extract_from_postgres,
+    streaming_bulk_upload,
 )
+from components.schema import MOVIES_INDEX
+from components.storage import storage
 
 
 class ETL:
@@ -42,5 +42,11 @@ class ETL:
                 for films in extract_from_postgres(
                     last_modified=last_modified, cursor=cur
                 ):
-                    bulk_upload(connection=elastic_conn, films=films)
+                    streaming_bulk_upload(
+                        connection=elastic_conn,
+                        data=films,
+                        index=es_settings.index_name,
+                        chunk_size=etl_settings.BATCH_SIZE,
+                        refresh="wait_for",
+                    )
                 self.storage.set_state("modified", datetime.now().isoformat())

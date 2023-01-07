@@ -2,7 +2,7 @@ import abc
 import json
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from components.config import etl_settings
 from components.logger import logger
@@ -24,7 +24,7 @@ class BaseStorage:
 
 
 class JsonFileStorage(BaseStorage):
-    def __init__(self, file_path: Optional[str] = None):
+    def __init__(self, file_path: str | Path = None):
         self._file_path = file_path
 
     def save_state(self, state: Dict) -> None:
@@ -47,8 +47,8 @@ class JsonFileStorage(BaseStorage):
 
 
 class State:
-    def __init__(self, storage: BaseStorage):
-        self._storage = storage
+    def __init__(self, _storage: BaseStorage):
+        self._storage = _storage
         self._state = {}
 
     def set_state(self, key: str, value: Any) -> None:
@@ -63,8 +63,8 @@ class State:
         return self._state.get(key)
 
 
-file_path = Path(
+storage_file_path = Path(
     Path(__file__).parents[1], "state", etl_settings.STATE_FILE_NAME
 )
 
-storage = State(JsonFileStorage(file_path=file_path))
+storage = State(JsonFileStorage(file_path=storage_file_path))

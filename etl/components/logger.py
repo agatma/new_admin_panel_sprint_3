@@ -11,7 +11,9 @@ time_rotated_handler = TimedRotatingFileHandler(
     backupCount=7,
     encoding="utf-8",
     filename=Path(
-        Path(__file__).parents[1], "logs", "etl-example.log".format(datetime.now())
+        Path(__file__).parents[1],
+        "logs",
+        "etl.log".format(datetime.now()),
     ),
     interval=1,
     when="midnight",

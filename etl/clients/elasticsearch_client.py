@@ -44,7 +44,7 @@ class ElasticsearchClient(AbstractClient):
         super().reconnect()
 
     @backoff(exceptions=(base_exceptions, SerializationError, RequestError))
-    def index_exists(self, index: str) -> None:
+    def index_exists(self, index: str) -> bool:
         return self._connection.indices.exists(index=index)
 
     @backoff(exceptions=(base_exceptions, SerializationError, RequestError))
@@ -59,4 +59,15 @@ class ElasticsearchClient(AbstractClient):
     @backoff(exceptions=(base_exceptions, SerializationError, RequestError))
     @client_reconnect
     def bulk(self, *args, **kwargs) -> None:
-        helpers.bulk(self._connection, *args, **kwargs)
+        helpers.bulk(client=self._connection, *args, **kwargs)
+
+    @backoff(exceptions=(base_exceptions, SerializationError, RequestError))
+    @client_reconnect
+    def streaming_bulk(self, *args, **kwargs) -> set:
+        return {
+            action
+            for ok, action in helpers.streaming_bulk(
+                client=self._connection, *args, **kwargs
+            )
+            if not ok
+        }
