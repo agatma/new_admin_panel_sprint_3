@@ -73,7 +73,10 @@ GENRE_INDEX = {
         "properties": {
             "id": {"type": "keyword"},
             "name": {"type": "keyword"},
-            "description": {"type": "text", "analyzer": "ru_en", },
+            "description": {
+                "type": "text",
+                "analyzer": "ru_en",
+            },
         },
     },
 }
@@ -83,17 +86,11 @@ PERSONS_INDEX = {
     "mappings": {
         "dynamic": "strict",
         "properties": {
-            "id": {
-                "type": "keyword"
-            },
+            "id": {"type": "keyword"},
             "full_name": {
                 "type": "text",
                 "analyzer": "ru_en",
-                "fields": {
-                    "raw": {
-                        "type": "keyword"
-                    }
-                }
+                "fields": {"raw": {"type": "keyword"}},
             },
             "films": {
                 "type": "nested",
@@ -103,67 +100,43 @@ PERSONS_INDEX = {
                         "type": "nested",
                         "dynamic": "strict",
                         "properties": {
-                            "id": {
-                                "type": "keyword"
-                            },
-                            "imdb_rating": {
-                                "type": "float"
-                            },
+                            "id": {"type": "keyword"},
+                            "imdb_rating": {"type": "float"},
                             "title": {
                                 "type": "text",
                                 "analyzer": "ru_en",
-                                "fields": {
-                                    "raw": {
-                                        "type": "keyword"
-                                    }
-                                }
-                            }
-                        }
+                                "fields": {"raw": {"type": "keyword"}},
+                            },
+                        },
                     },
                     "writer": {
                         "type": "nested",
                         "dynamic": "strict",
                         "properties": {
-                            "id": {
-                                "type": "keyword"
-                            },
-                            "imdb_rating": {
-                                "type": "float"
-                            },
+                            "id": {"type": "keyword"},
+                            "imdb_rating": {"type": "float"},
                             "title": {
                                 "type": "text",
                                 "analyzer": "ru_en",
-                                "fields": {
-                                    "raw": {
-                                        "type": "keyword"
-                                    }
-                                }
-                            }
-                        }
+                                "fields": {"raw": {"type": "keyword"}},
+                            },
+                        },
                     },
                     "director": {
                         "type": "nested",
                         "dynamic": "strict",
                         "properties": {
-                            "id": {
-                                "type": "keyword"
-                            },
-                            "imdb_rating": {
-                                "type": "float"
-                            },
+                            "id": {"type": "keyword"},
+                            "imdb_rating": {"type": "float"},
                             "title": {
                                 "type": "text",
                                 "analyzer": "ru_en",
-                                "fields": {
-                                    "raw": {
-                                        "type": "keyword"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+                                "fields": {"raw": {"type": "keyword"}},
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
 }

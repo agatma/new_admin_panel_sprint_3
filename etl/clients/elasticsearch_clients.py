@@ -1,13 +1,7 @@
 from http import HTTPStatus
 
 from elasticsearch import AsyncElasticsearch, Elasticsearch, helpers
-from elasticsearch.exceptions import ConnectionError as ElasticConnectionError
-from elasticsearch.exceptions import (
-    ConnectionTimeout,
-    RequestError,
-    SerializationError,
-    TransportError,
-)
+from elasticsearch import exceptions
 from pydantic import AnyHttpUrl
 
 from clients.base_client import AbstractClient
@@ -22,7 +16,7 @@ CONNECTION_FAIL = (
 
 
 class ElasticsearchClient(AbstractClient):
-    base_exceptions = ElasticConnectionError
+    base_exceptions = exceptions.ConnectionError
     _connection = Elasticsearch
 
     def __init__(self, dsn: AnyHttpUrl, *args, **kwargs):
@@ -32,7 +26,12 @@ class ElasticsearchClient(AbstractClient):
     def is_connected(self) -> bool:
         return self._connection and self._connection.ping()
 
-    @backoff(exceptions=(base_exceptions, TransportError, ConnectionTimeout))
+    @backoff(
+        exceptions=(
+            base_exceptions,
+            exceptions.TransportError,
+        )
+    )
     def connect(self) -> None:
         """Клиент ленивый - нужен явный запрос на ping"""
         logger.info("Попытка подключения к Elasticsearch")
@@ -49,12 +48,22 @@ class ElasticsearchClient(AbstractClient):
     def reconnect(self) -> None:
         super().reconnect()
 
-    @backoff(exceptions=(base_exceptions, SerializationError, RequestError))
+    @backoff(
+        exceptions=(
+            base_exceptions,
+            exceptions.RequestError,
+        )
+    )
     @client_reconnect
     def index_exists(self, index: str) -> bool:
         return self._connection.indices.exists(index=index)
 
-    @backoff(exceptions=(base_exceptions, SerializationError, RequestError))
+    @backoff(
+        exceptions=(
+            base_exceptions,
+            exceptions.SerializationError,
+        )
+    )
     @client_reconnect
     def index_create(self, index: str, body: dict):
         return self._connection.indices.create(
@@ -63,7 +72,6 @@ class ElasticsearchClient(AbstractClient):
             ignore=HTTPStatus.BAD_REQUEST.value,
         )
 
-    @backoff(exceptions=(base_exceptions, SerializationError, RequestError))
     def create_index_if_not_exists(self, index_name, index_schema) -> None:
         if not self.index_exists(index=index_name):
             response = self.index_create(
@@ -77,7 +85,7 @@ class ElasticsearchClient(AbstractClient):
 
 
 class ElasticsearchAsyncClient:
-    base_exceptions = ElasticConnectionError
+    base_exceptions = exceptions.ConnectionError
     _connection = AsyncElasticsearch
 
     def __init__(self, dsn, *args, **kwargs):

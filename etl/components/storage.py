@@ -2,7 +2,7 @@ import abc
 import json
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Union
 from components.logger import logger
 
 FILE_NOT_FOUND = "Файл {name} не найден. Произошла ошибка: {error}."
@@ -22,7 +22,7 @@ class BaseStorage:
 
 
 class JsonFileStorage(BaseStorage):
-    def __init__(self, file_path: str | Path = None):
+    def __init__(self, file_path: Union[str, Path] = None):
         self._file_path = file_path
 
     def save_state(self, state: Dict) -> None:
@@ -47,7 +47,7 @@ class JsonFileStorage(BaseStorage):
 class State:
     def __init__(self, _storage: BaseStorage):
         self._storage = _storage
-        self._state = {}
+        self._state: dict[str, Any] = {}
 
     def set_state(self, key: str, value: Any) -> None:
         """Установить состояние для ключа"""

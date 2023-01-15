@@ -26,11 +26,11 @@ class PersonFilms(BaseModel):
     full_name: str
     films: list = []
 
-    @validator('films')
+    @validator("films")
     def validate_films(cls, v):
         roles = defaultdict(list)
         for row in v:
-            role = row.pop('role')
+            role = row.pop("role")
             roles[role].append(FilmShort(**row))
         return roles
 

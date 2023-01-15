@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from pydantic import BaseSettings, Field
 from components.models import FilmWork, Genre, PersonFilms
@@ -5,6 +6,7 @@ from components import queries
 from components import indexes
 from components.models import ModelETL
 from components.storage import State, JsonFileStorage
+from components.logger import logger
 
 
 class PostgresConfig(BaseSettings):
@@ -17,7 +19,10 @@ class PostgresConfig(BaseSettings):
 
     @property
     def pg_dsn(self):
-        return f"postgres://{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}"
+        return (
+            f"postgres://{self.user}:{self.password}"
+            f"@{self.host}:{self.port}/{self.dbname}"
+        )
 
     class Config:
         case_sensitive = False
@@ -46,42 +51,44 @@ class ETLConfig(BaseSettings):
 
 """Настройки моделей ETL"""
 ETLFilmModel = ModelETL(
-    index_name='movies',
+    index_name="movies",
     index_schema=indexes.FILMWORK_INDEX,
     query=queries.last_modified_films_query,
     amount_query_args=3,
     model=FilmWork,
-    batch_size=100,
+    batch_size=50,
 )
 ETLGenreModel = ModelETL(
-    index_name='genre',
+    index_name="genre",
     index_schema=indexes.GENRE_INDEX,
     query=queries.last_modified_genres_query,
     amount_query_args=1,
     model=Genre,
-    batch_size=50,
+    batch_size=100,
 )
 ETLPersonsFilmsModel = ModelETL(
-    index_name='persons',
+    index_name="persons",
     index_schema=indexes.PERSONS_INDEX,
     query=queries.last_modified_persons_films_query,
     amount_query_args=1,
     model=PersonFilms,
     batch_size=100,
-
 )
 
-storage_file_path = Path(
-    Path(__file__).parents[1], "state", 'state.json'
-)
+storage_file_path = Path(Path(__file__).parents[1], "state", "state.json")
 
 
 class AppSettings(BaseSettings):
     es_settings: ElasticConfig = ElasticConfig()
-    etl_models: list[ModelETL] = [ETLPersonsFilmsModel, ETLGenreModel, ETLFilmModel]
+    etl_models: list[ModelETL] = [
+        ETLPersonsFilmsModel,
+        ETLGenreModel,
+        ETLFilmModel,
+    ]
     pg_settings: PostgresConfig = PostgresConfig()
     storage: State = State(JsonFileStorage(file_path=storage_file_path))
-    TIME_INTERVAL: int = Field(300, env="TIME_INTERVAL")
+    sleep_interval: int = Field(300, env="TIME_INTERVAL")
+    logger: logging.Logger = logger
 
     class Config:
         env_file = ".env"
