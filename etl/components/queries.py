@@ -55,3 +55,35 @@ WHERE fw.modified > %s OR p.modified > %s OR g.modified > %s
 GROUP BY fw.id
 ORDER BY fw.modified ASC;
 """
+
+last_modified_genres_query = """
+SELECT g.id, 
+	   g.name, 
+	   g.description
+FROM content.genre as g
+WHERE g.modified > %s
+ORDER BY g.modified ASC;
+
+;
+"""
+
+last_modified_persons_films_query = """
+SELECT p.id, p.full_name, COALESCE (
+       JSON_AGG(
+           DISTINCT JSONB_BUILD_OBJECT(
+               'uuid', fw.id,
+               'title', fw.title,
+			   'role', pf.role,
+			   'imdb_rating', fw.rating
+           )
+       ) FILTER (WHERE fw.id is not null)
+	,'[]'
+   ) as films
+FROM content.person as p
+LEFT JOIN content.person_film_work as pf on p.id = pf.person_id
+LEFT JOIN content.film_work as fw on pf.film_work_id = fw.id
+WHERE p.modified > %s 
+GROUP BY p.id
+ORDER BY p.modified ASC
+;
+"""

@@ -3,8 +3,6 @@ import json
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Any, Dict
-
-from components.config import etl_settings
 from components.logger import logger
 
 FILE_NOT_FOUND = "Файл {name} не найден. Произошла ошибка: {error}."
@@ -61,10 +59,3 @@ class State:
         """Достать состояние ключа"""
         self._state = self._storage.retrieve_state()
         return self._state.get(key)
-
-
-storage_file_path = Path(
-    Path(__file__).parents[1], "state", etl_settings.STATE_FILE_NAME
-)
-
-storage = State(JsonFileStorage(file_path=storage_file_path))

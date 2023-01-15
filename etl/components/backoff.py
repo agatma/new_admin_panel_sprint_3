@@ -1,5 +1,5 @@
+import time
 from functools import wraps
-from time import sleep
 from typing import Any
 
 from _collections_abc import Callable
@@ -50,25 +50,37 @@ def backoff(
     :param max_attempts: максимальное количество попыток
     """
 
-    def func_wrapper(func: Callable) -> Callable:
+    def func_wrapper(func: Callable):
         @wraps(func)
-        def inner(*args, **kwargs) -> Callable:
-            sleep_time = start_sleep_time
-            attempts = 1
-            while attempts <= max_attempts:
-                try:
-                    return func(*args, **kwargs)
-                except exceptions as error:
-                    logger.error(
-                        EXECUTION_ERROR.format(name=func.__name__, error=error)
+        def inner(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except exceptions as error:
+                logger.error(
+                    EXECUTION_ERROR.format(
+                        name=func.__name__, error=type(error)
                     )
-                    if sleep_time < border_sleep_time:
-                        sleep_time = sleep_time * (factor**attempts)
-                    else:
-                        sleep_time = border_sleep_time
-                    sleep(sleep_time)
-                    attempts += 1
-            logger.error(MAX_ATTEMPTS)
+                )
+                t = start_sleep_time
+                n = 0
+                attempts = 1
+                while attempts <= max_attempts:
+                    try:
+                        return func(*args, **kwargs)
+                    except exceptions as error:
+                        if t < border_sleep_time:
+                            t = t * factor**n
+                            n += 1
+                        delay = min(t, border_sleep_time)
+                        logger.error(
+                            EXECUTION_ERROR.format(
+                                name=func.__name__, error=type(error)
+                            )
+                        )
+                        time.sleep(delay)
+                        attempts += 1
+                if attempts >= max_attempts:
+                    raise ConnectionError("Не удалось установить соединение ")
 
         return inner
 
