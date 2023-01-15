@@ -7,9 +7,8 @@ from psycopg2.extras import RealDictCursor
 
 from clients.elasticsearch_clients import ElasticsearchClient
 from clients.postgres_client import PostgresClient
-from components.logger import logger
-from components.etl import ETL
 from components.config import AppSettings
+from components.etl import ETL
 
 ERROR_MESSAGE = "ETL процесс остановлен. Произошла ошибка: {error}."
 
@@ -28,7 +27,7 @@ async def main(settings: AppSettings) -> None:
                 etl = ETL(
                     elastic_conn=elastic_conn,
                     pg_conn=pg_conn,
-                    settings=settings
+                    settings=settings,
                 )
                 await etl.start_pipeline()
         except Exception as error:

@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from elasticsearch import AsyncElasticsearch, Elasticsearch, helpers
-from elasticsearch import exceptions
+from elasticsearch import (AsyncElasticsearch, Elasticsearch, exceptions,
+                           helpers)
 from pydantic import AnyHttpUrl
 
 from clients.base_client import AbstractClient

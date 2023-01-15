@@ -6,16 +6,16 @@ from clients.elasticsearch_clients import (
     ElasticsearchClient,
 )
 from clients.postgres_client import PostgresClient
-from components.pipe import Pipe, AbstractETLInterface
+from components.pipe import Pipe
 from components.config import AppSettings
 
 
 class ETL:
     def __init__(
-            self,
-            elastic_conn: ElasticsearchClient,
-            pg_conn: PostgresClient,
-            settings: AppSettings
+        self,
+        elastic_conn: ElasticsearchClient,
+        pg_conn: PostgresClient,
+        settings: AppSettings,
     ):
         self.elastic_conn = elastic_conn
         self.pg_conn = pg_conn
@@ -23,7 +23,7 @@ class ETL:
 
     async def start_pipeline(self) -> None:
         last_modified: datetime = (
-                self.settings.storage.get_state("modified") or datetime.min
+            self.settings.storage.get_state("modified") or datetime.min
         )
         async_elastic_conn: ElasticsearchAsyncClient = (
             ElasticsearchAsyncClient(dsn=self.elastic_conn.dsn)
@@ -39,7 +39,7 @@ class ETL:
                 last_modified=last_modified,
                 model_params=model_params,
                 pg_conn=self.pg_conn,
-                settings=self.settings
+                settings=self.settings,
             )
             tasks.extend([pipe.load(), pipe.extract()])
         await asyncio.gather(

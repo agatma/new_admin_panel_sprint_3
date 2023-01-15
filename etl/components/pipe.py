@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 
 from psycopg2.extras import RealDictRow
+from pydantic import BaseModel
 from pydantic.error_wrappers import ValidationError
 
 from clients.elasticsearch_clients import ElasticsearchAsyncClient
 from clients.postgres_client import PostgresClient, PostgresCursor
-from components.models import ModelETL
 from components.config import AppSettings
-from pydantic import BaseModel
+from components.models import ModelETL
 
 
 class AbstractETLInterface(ABC):
@@ -29,17 +29,19 @@ class AbstractETLInterface(ABC):
 
 class Pipe(AbstractETLInterface):
     def __init__(
-            self,
-            elastic_conn: ElasticsearchAsyncClient,
-            last_modified: datetime,
-            model_params: ModelETL,
-            pg_conn: PostgresClient,
-            settings: AppSettings,
+        self,
+        elastic_conn: ElasticsearchAsyncClient,
+        last_modified: datetime,
+        model_params: ModelETL,
+        pg_conn: PostgresClient,
+        settings: AppSettings,
     ):
         self.model_params = model_params
         self.settings = settings
         self._elastic_conn = elastic_conn
-        self._query_args: tuple = (last_modified,) * model_params.amount_query_args
+        self._query_args: tuple = (
+            last_modified,
+        ) * model_params.amount_query_args
         self._Queue: asyncio.Queue = asyncio.Queue(maxsize=1)
         self._pg_conn = pg_conn
 
@@ -119,14 +121,18 @@ class Pipe(AbstractETLInterface):
 
     def save_validation_results(self, errors, start, success_id):
         errors |= (
-                self.settings.storage.get_state(f"{self.model_params.index_name}_pgsql_errors")
-                or {}
+            self.settings.storage.get_state(
+                f"{self.model_params.index_name}_pgsql_errors"
+            )
+            or {}
         )
         self.settings.storage.set_state(
             f"{self.model_params.index_name}_pgsql_errors", errors
         )
         success = success_id.union(
-            self.settings.storage.get_state(f"{self.model_params.index_name}_pgsql_success")
+            self.settings.storage.get_state(
+                f"{self.model_params.index_name}_pgsql_success"
+            )
             or set()
         )
         self.settings.storage.set_state(
@@ -143,5 +149,5 @@ class Pipe(AbstractETLInterface):
                     f"Произошла ошибка при валидации объектов индекса "
                     f"{self.model_params.index_name} из Postgres."
                     f"{list(errors.keys())}. Подробности: etl_status/state.json"
-                )
+                ),
             )

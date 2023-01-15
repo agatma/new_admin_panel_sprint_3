@@ -1,12 +1,12 @@
 import logging
 from pathlib import Path
+
 from pydantic import BaseSettings, Field
-from components.models import FilmWork, Genre, PersonFilms
-from components import queries
-from components import indexes
-from components.models import ModelETL
-from components.storage import State, JsonFileStorage
+
+from components import indexes, queries
 from components.logger import logger
+from components.models import FilmWork, Genre, ModelETL, PersonFilms
+from components.storage import JsonFileStorage, State
 
 
 class PostgresConfig(BaseSettings):

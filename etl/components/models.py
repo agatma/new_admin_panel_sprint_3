@@ -1,7 +1,7 @@
-from uuid import UUID
 from collections import defaultdict
-from pydantic import BaseSettings, Field
-from pydantic import BaseModel, validator
+from uuid import UUID
+
+from pydantic import BaseModel, BaseSettings, Field, validator
 
 
 class Genre(BaseModel):
