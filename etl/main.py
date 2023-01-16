@@ -30,12 +30,14 @@ async def main(settings: AppSettings) -> None:
                     settings=settings,
                 )
                 await etl.start_pipeline()
+        except KeyboardInterrupt:
+            settings.logger.info("Процесс остановлен")
+            break
         except Exception as error:
             settings.logger.exception(ERROR_MESSAGE.format(error=error))
         finally:
-            settings.logger.info("Остановка процесса на 5 минут")
+            settings.logger.info("Остановка процесса на 2 минуты")
             sleep(settings.sleep_interval)
-
 
 if __name__ == "__main__":
     settings = AppSettings()

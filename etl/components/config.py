@@ -87,7 +87,7 @@ class AppSettings(BaseSettings):
     ]
     pg_settings: PostgresConfig = PostgresConfig()
     storage: State = State(JsonFileStorage(file_path=storage_file_path))
-    sleep_interval: int = Field(300, env="TIME_INTERVAL")
+    sleep_interval: int = Field(120, env="TIME_INTERVAL")
     logger: logging.Logger = logger
 
     class Config:

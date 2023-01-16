@@ -31,18 +31,17 @@ def reconnect(func: Callable) -> Any:
 
 
 def backoff(
-    exceptions: tuple,
-    start_sleep_time: float = 0.1,
-    factor: int = 2,
-    border_sleep_time: int = 10,
-    max_attempts: int = 10,
+        exceptions: tuple,
+        start_sleep_time: float = 0.1,
+        factor: int = 2,
+        border_sleep_time: int = 10,
+        max_attempts: int = 10,
 ) -> Callable:
     """
     Функция для повторного выполнения функции через некоторое время,
     если возникла ошибка.
     Использует наивный экспоненциальный рост времени повтора (factor)
     до граничного времени ожидания (border_sleep_time)
-
     :param exceptions: исключения, которые могут произойти
     :param start_sleep_time: начальное время повтора
     :param factor: во сколько раз нужно увеличить время ожидания
@@ -50,37 +49,25 @@ def backoff(
     :param max_attempts: максимальное количество попыток
     """
 
-    def func_wrapper(func: Callable):
+    def func_wrapper(func: Callable) -> Callable:
         @wraps(func)
-        def inner(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except exceptions as error:
-                logger.error(
-                    EXECUTION_ERROR.format(
-                        name=func.__name__, error=type(error)
+        def inner(*args, **kwargs) -> Callable:
+            sleep_time = start_sleep_time
+            attempts = 1
+            while attempts <= max_attempts:
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as error:
+                    logger.error(
+                        EXECUTION_ERROR.format(name=func.__name__, error=error)
                     )
-                )
-                t = start_sleep_time
-                n = 0
-                attempts = 1
-                while attempts <= max_attempts:
-                    try:
-                        return func(*args, **kwargs)
-                    except exceptions as error:
-                        if t < border_sleep_time:
-                            t = t * factor**n
-                            n += 1
-                        delay = min(t, border_sleep_time)
-                        logger.error(
-                            EXECUTION_ERROR.format(
-                                name=func.__name__, error=type(error)
-                            )
-                        )
-                        time.sleep(delay)
-                        attempts += 1
-                if attempts >= max_attempts:
-                    raise ConnectionError("Не удалось установить соединение ")
+                    if sleep_time < border_sleep_time:
+                        sleep_time = sleep_time * (factor ** attempts)
+                    else:
+                        sleep_time = border_sleep_time
+                    time.sleep(sleep_time)
+                    attempts += 1
+            logger.error(MAX_ATTEMPTS)
 
         return inner
 

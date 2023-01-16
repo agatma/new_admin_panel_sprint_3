@@ -2,19 +2,25 @@
 
 Цель проекта: создать API, возвращающий список фильмов в формате, описанном в openapi-файле, и позволяющий получить информацию об одном фильме. Дополнительно реализован полнотекстовый поиск
 
+### Перед запуском контейнеров создайте .env файл
+```
+make env_file
+```
 
-### Работа с проектом используя make
-#### Список контейнеров: postgres, django-app, elasticsearch, ETL-app, swagger, nginx
+### Работа с проектом с помощью make
+#### Список контейнеров: postgres, django-admin, elasticsearch, ETL-app, swagger, nginx
 
 ```
-make full_run		- Запуск контейнеров с миграциями и бекапом
-make run		- Пустой запуск контейнеров
-make migrate		- Выполнить миграции
-make load		- Загрузить данные в postgresql
-make superuser		- Создать суперпользователя
-make backend		- Консоль backend контейнера.
-make etl		- Консоль ETL контейнера.
-make postgresql		- Консоль postgresql контейнера.
-make nginx		- Консоль nginx контейнера.
-make stop		- Выключение контейнера.
+	@echo "make env_file		- Создать .env file на основе .env_example.."
+	@echo "make full_run		- Запуск контейнеров с миграциями и бекапом."
+	@echo "make run		- Пустой запуск контейнеров (не рекомендуется)."
+	@echo "make superuser		- Создать суперпользователя "
+	@echo "make migrate		- Выполнить миграции "
+	@echo "make load		- Загрузить данные в postgresql "
+	@echo "make backend		- Консоль backend контейнера."
+	@echo "make etl		- Консоль ETL контейнера."
+	@echo "make postgresql		- Консоль postgresql контейнера."
+	@echo "make nginx		- Консоль nginx контейнера."
+	@echo "make stop		- Остановка контейнеров."
+	@echo "make stop_d		- Остановка контейнеров и удаление томов "
 ```

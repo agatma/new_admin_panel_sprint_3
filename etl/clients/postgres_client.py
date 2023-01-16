@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import contextlib
 from typing import Any
 
@@ -9,7 +11,6 @@ from pydantic import PostgresDsn
 
 from clients.base_client import AbstractClient, AbstractClientInterface
 from components.backoff import backoff
-from components.backoff import reconnect as client_reconnect
 from components.logger import logger
 
 
@@ -86,18 +87,13 @@ class PostgresCursor(AbstractClientInterface):
             logger.debug("Создание курсора для postgres соединения")
             self.connect()
 
-    @backoff(exceptions=(base_exceptions,))
     def close(self) -> None:
         if self.is_cursor_opened:
             self._cursor.close()
             logger.debug("Postgres cursor закрыт")
 
-    @backoff(exceptions=(base_exceptions, psycopg2.DatabaseError))
-    @client_reconnect
     def execute(self, query: str | SQL, *args, **kwargs) -> None:
         self._cursor.execute(query, *args, **kwargs)
 
-    @backoff(exceptions=(base_exceptions, psycopg2.DatabaseError))
-    @client_reconnect
     def fetchmany(self, chunk: int) -> list[Any]:
         return self._cursor.fetchmany(size=chunk)
