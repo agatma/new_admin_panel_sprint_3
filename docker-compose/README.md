@@ -11,13 +11,14 @@ make env_file
 #### Список контейнеров: postgres, django-admin, elasticsearch, ETL-app, swagger, nginx
 
 ```
-	@echo "make env_file		- Создать .env file на основе .env_example.."
+	@echo "make env_file		- Создать .env file на основе .env_example. - СДЕЛАЙТЕ ПЕРВЫМ ДЕЙСТВИЕМ"
 	@echo "make full_run		- Запуск контейнеров с миграциями и бекапом."
+	@echo "make etl_logs		- Посмотреть логи ETL сервиса."
 	@echo "make run		- Пустой запуск контейнеров (не рекомендуется)."
 	@echo "make superuser		- Создать суперпользователя "
 	@echo "make migrate		- Выполнить миграции "
 	@echo "make load		- Загрузить данные в postgresql "
-	@echo "make backend		- Консоль backend контейнера."
+	@echo "make django_admin	- Консоль django контейнера."
 	@echo "make etl		- Консоль ETL контейнера."
 	@echo "make postgresql		- Консоль postgresql контейнера."
 	@echo "make nginx		- Консоль nginx контейнера."
