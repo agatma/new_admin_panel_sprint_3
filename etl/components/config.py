@@ -59,7 +59,7 @@ ETLFilmModel = ModelETL(
     batch_size=50,
 )
 ETLGenreModel = ModelETL(
-    index_name="genre",
+    index_name="genres",
     index_schema=indexes.GENRE_INDEX,
     query=queries.last_modified_genres_query,
     amount_query_args=1,
