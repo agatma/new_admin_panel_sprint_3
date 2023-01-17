@@ -35,7 +35,7 @@ SELECT
        JSON_AGG(
            DISTINCT JSONB_BUILD_OBJECT(
                'id', p.id,
-               'name', p.full_name
+               'full_name', p.full_name
            )
        ) FILTER (WHERE pfw.role = 'actor'),
        '[]'
@@ -44,7 +44,7 @@ SELECT
        JSON_AGG(
            DISTINCT JSONB_BUILD_OBJECT(
                'id', p.id,
-               'name', p.full_name
+               'full_name', p.full_name
            )
        ) FILTER (WHERE pfw.role = 'director'),
        '[]'
@@ -53,7 +53,7 @@ SELECT
        JSON_AGG(
            DISTINCT JSONB_BUILD_OBJECT(
                'id', p.id,
-               'name', p.full_name
+               'full_name', p.full_name
            )
        ) FILTER (WHERE pfw.role = 'writer'),
        '[]'

@@ -5,25 +5,23 @@ from uuid import UUID
 from pydantic import BaseModel, BaseSettings, Field, validator
 
 
-class Genre(BaseModel):
+class BaseModelUUIDMixin(BaseModel):
     id: UUID
+
+
+class GenreShort(BaseModelUUIDMixin):
     name: str
+
+
+class Genre(GenreShort):
     description: str | None = None
 
 
-class GenreShort(BaseModel):
-    id: UUID
-    name: str
-
-
-class Person(BaseModel):
-    id: UUID
-    name: str
-
-
-class PersonFilms(BaseModel):
-    id: UUID
+class Person(BaseModelUUIDMixin):
     full_name: str
+
+
+class PersonFilms(Person):
     films: list = []
 
     @validator("films")
@@ -35,14 +33,13 @@ class PersonFilms(BaseModel):
         return roles
 
 
-class Film(BaseModel):
+class Film(BaseModelUUIDMixin):
     id: UUID = Field(alias="uuid")
     title: str
     imdb_rating: float
 
 
-class FilmWork(BaseModel):
-    id: UUID
+class FilmWork(BaseModelUUIDMixin):
     imdb_rating: float
     age_limit: Optional[int] = 18
     genres: list[GenreShort]

@@ -59,7 +59,7 @@ FILMWORK_INDEX = {
                 "dynamic": "strict",
                 "properties": {
                     "id": {"type": "keyword"},
-                    "name": {"type": "text", "analyzer": "ru_en"},
+                    "full_name": {"type": "text", "analyzer": "ru_en"},
                 },
             },
             "directors": {
@@ -67,7 +67,7 @@ FILMWORK_INDEX = {
                 "dynamic": "strict",
                 "properties": {
                     "id": {"type": "keyword"},
-                    "name": {"type": "text", "analyzer": "ru_en"},
+                    "full_name": {"type": "text", "analyzer": "ru_en"},
                 },
             },
             "writers": {
@@ -75,7 +75,7 @@ FILMWORK_INDEX = {
                 "dynamic": "strict",
                 "properties": {
                     "id": {"type": "keyword"},
-                    "name": {"type": "text", "analyzer": "ru_en"},
+                    "full_name": {"type": "text", "analyzer": "ru_en"},
                 },
             },
         },
