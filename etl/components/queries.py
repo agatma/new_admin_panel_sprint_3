@@ -3,11 +3,14 @@ SELECT
     fw.id,
     fw.rating AS imdb_rating,
     COALESCE (
-        ARRAY_AGG(
-            DISTINCT g.name
-        ),
-        '{}'
-    ) AS genre,
+        json_agg(
+            DISTINCT jsonb_build_object(
+                'id', g.id,
+                'name', g.name
+                )
+                ) FILTER (WHERE g.id is not null),
+                '[]'
+                ) as genres,
     fw.title,
     fw.description,
     COALESCE (
@@ -15,7 +18,7 @@ SELECT
            DISTINCT (p.full_name)
        ) FILTER (WHERE pfw.role = 'director'),
        '{}'
-   ) as director,
+   ) as directors_names,
    COALESCE (
        ARRAY_AGG(
            DISTINCT (p.full_name)
@@ -37,6 +40,15 @@ SELECT
        ) FILTER (WHERE pfw.role = 'actor'),
        '[]'
    ) as actors,
+   COALESCE (
+       JSON_AGG(
+           DISTINCT JSONB_BUILD_OBJECT(
+               'id', p.id,
+               'name', p.full_name
+           )
+       ) FILTER (WHERE pfw.role = 'director'),
+       '[]'
+   ) as directors,
     COALESCE (
        JSON_AGG(
            DISTINCT JSONB_BUILD_OBJECT(

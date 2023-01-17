@@ -1,3 +1,4 @@
+from typing import Optional
 from collections import defaultdict
 from uuid import UUID
 
@@ -10,15 +11,14 @@ class Genre(BaseModel):
     description: str | None = None
 
 
-class Person(BaseModel):
+class GenreShort(BaseModel):
     id: UUID
     name: str
 
 
-class FilmShort(BaseModel):
-    id: UUID = Field(alias="uuid")
-    title: str
-    imdb_rating: float
+class Person(BaseModel):
+    id: UUID
+    name: str
 
 
 class PersonFilms(BaseModel):
@@ -31,21 +31,29 @@ class PersonFilms(BaseModel):
         roles = defaultdict(list)
         for row in v:
             role = row.pop("role")
-            roles[role].append(FilmShort(**row))
+            roles[role].append(Film(**row))
         return roles
+
+
+class Film(BaseModel):
+    id: UUID = Field(alias="uuid")
+    title: str
+    imdb_rating: float
 
 
 class FilmWork(BaseModel):
     id: UUID
     imdb_rating: float
-    genre: list[str]
+    age_limit: Optional[int] = 18
+    genres: list[GenreShort]
     title: str
     description: str | None
-    director: list[str | None]
+    directors_names: list[str | None]
     actors_names: list[str]
     writers_names: list[str]
     actors: list[Person]
     writers: list[Person]
+    directors: list[Person]
 
 
 class ModelETL(BaseSettings):
